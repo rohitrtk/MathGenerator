@@ -1,3 +1,6 @@
+from enum import IntEnum
+
+
 class Expression:
 
     def __init__(self, number1: int, number2: int):
@@ -15,3 +18,12 @@ class Expression:
 
     def div_expression(self):
         return '%d \u00F7 %d = ' % (self.number1, self.number2)
+
+
+class QuestionType(IntEnum):
+    ADDITION = 0
+    SUBTRACTION = 1
+    MULTIPLICATION = 2
+    DIVISION = 3
+    EXPONENTS = 4
+    BRACKETS = 5

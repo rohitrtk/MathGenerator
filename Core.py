@@ -1,22 +1,56 @@
-from MathQ import Expression
+from MathQ import Expression, QuestionType
 from typing import List
+from enum import Enum
 from datetime import datetime
 import random
 import os
 
-FILE_NAME = 'Questions.txt'
+FILE_NAME = 'Questions'
+FILE_EXTENSION = '.txt'
 HOME_DIRECTORY = os.path.join(os.environ['USERPROFILE'], 'Desktop')
 
 
 def run():
-    difficulty = set_difficulty()
 
+    # Set the type of questions
+    question_type = set_question_type()
+
+    # Set the difficulty
+    #difficulty = set_difficulty()
+
+    # Set the number of questions
     number_of_questions = set_number_questions()
 
-    questions = generate_questions(number_of_questions, difficulty)
+    questions = generate_questions(number_of_questions, question_type)
 
-    output_file = os.path.join(HOME_DIRECTORY, generate_file_name(FILE_NAME))
-    generate_file(output_file, questions)
+    output_directory = os.path.join(HOME_DIRECTORY, generate_file_name(FILE_NAME))
+    generate_file(output_directory, questions)
+
+
+def set_question_type() -> List[QuestionType]:
+    pretty_question_types = \
+        """
+        0. Addition
+        1. Subtraction
+        2. Multiplication
+        3. Division
+        4. Exponents
+        5. Brackets
+        """
+
+    i = input('%s\n%s' % ('Enter the questions you\'d like seperated '
+        'with a space.\nHere are your options:', pretty_question_types))
+
+    question_types = []
+    user_input = i.split()
+    print(QuestionType(3))
+    for index in range(len(user_input)):
+        if user_input[index] in question_types:
+            continue
+
+        question_types.append(QuestionType(user_input[index]))
+
+    return question_types
 
 
 def set_difficulty() -> int:
@@ -39,7 +73,7 @@ def set_difficulty() -> int:
     return difficulty
 
 
-def set_number_questions(number_of_questions = 20) -> int:
+def set_number_questions(number_of_questions=20) -> int:
     while True:
         s = input('Please set number of questions. (The default is 20, enter a blank line to use default): ')
 
@@ -55,7 +89,7 @@ def set_number_questions(number_of_questions = 20) -> int:
     return number_of_questions
 
 
-def generate_question(difficulty: int) -> str:
+def generate_question(question_types: List[QuestionType]) -> str:
     number1 = random.randrange(0, 50)
     number2 = random.randrange(0, 50)
 
@@ -64,28 +98,33 @@ def generate_question(difficulty: int) -> str:
 
     exp = Expression(number1, number2)
 
-    # Addition and Subtraction
-    if difficulty == 1:
+    question_type = question_types[0]
+    if len(question_types) > 1:
+        question_type = random.randrange(question_types[0].value, question_types[len(question_types) - 1].value)
 
-        r = random.randrange(0, 2)
-        # Addition
-        if r == 0:
-            return exp.add_expression()
+    if question_type == QuestionType.ADDITION:
+        return exp.add_expression()
 
+    elif question_type == QuestionType.SUBTRACTION:
         return exp.sub_expression()
 
-    # Implies difficulty = 0
-    return exp.add_expression()
+    elif question_type == QuestionType.MULTIPLICATION:
+        return exp.mul_expression()
+
+    elif question_type == QuestionType.DIVISION:
+        return exp.div_expression()
+
+    return 'NOT IMPLEMENTED YET!'
 
 
-def generate_questions(number_of_questions: int, difficulty: int) -> List[str]:
+def generate_questions(number_of_questions: int, question_types: List[QuestionType]) -> List[str]:
     questions = []
 
     for i in range(number_of_questions):
 
-        q = generate_question(difficulty)
+        q = generate_question(question_types)
         while q in questions:
-            q = generate_question(difficulty)
+            q = generate_question(question_types)
 
         questions.append('%d) %s' % (i + 1, q))
 
@@ -96,9 +135,9 @@ def generate_questions(number_of_questions: int, difficulty: int) -> List[str]:
 
 
 def generate_file(target_file: str, questions: List[str]):
-    os.makedirs(os.path.dirname(target_file), exist_ok=True)
+    create_file(target_file)
 
-    with open(target_file) as file:
+    with open(target_file, 'w') as file:
 
         for line in format_questions(questions):
             file.write(line)
@@ -120,8 +159,7 @@ def format_questions(questions: List[str]) -> List[str]:
         char_counter += len(line)
 
         if i % 2 == 1 and i != 0:
-            lines.append('\n%s' % add_pretty_line(char_counter))
-            lines.append('\n')
+            lines.append('\n%s\n' % add_pretty_line(char_counter))
 
             char_counter = 0
 
@@ -142,7 +180,7 @@ def get_max_chars(questions: List[str]) -> int:
     max_char = 0
 
     for i in range(len(questions)):
-        if i > max_char:
+        if len(questions[i]) > max_char:
             max_char = i
 
     return max_char
@@ -164,15 +202,16 @@ def add_pretty_line(length_of_previous: int) -> str:
     return s
 
 
-def generate_file_name(file_name: str) -> str:
+def generate_file_name(directory_name: str) -> str:
     # file_name will be a constant
+    t = '%s_%s-%s-%s' % (str(datetime.now().date()), str(datetime.now().hour), str(datetime.now().minute), str(datetime.now().second))
 
-    t = str(datetime.now())
-    #for i in t:
-    #    if i == ':' or i == '.':
-    #        i = '-'
+    return '%s_%s%s' % (directory_name, t, FILE_EXTENSION)
 
-    return '%s_%s' % (file_name, t)
+
+def create_file(file: str):
+    f = open(file, 'w')
+    f.close()
 
 
 if __name__ == '__main__':
