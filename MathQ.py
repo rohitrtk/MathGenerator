@@ -1,6 +1,3 @@
-from enum import IntEnum
-
-
 class Expression:
 
     def __init__(self, number1: int, number2: int):
@@ -20,7 +17,7 @@ class Expression:
         return '%d \u00F7 %d = ' % (self.number1, self.number2)
 
 
-class QuestionType(IntEnum):
+class QuestionType():
     ADDITION = 0
     SUBTRACTION = 1
     MULTIPLICATION = 2

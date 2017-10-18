@@ -27,7 +27,7 @@ def run():
     generate_file(output_directory, questions)
 
 
-def set_question_type() -> List[QuestionType]:
+def set_question_type() -> List[int]:
     pretty_question_types = \
         """
         0. Addition
@@ -43,12 +43,12 @@ def set_question_type() -> List[QuestionType]:
 
     question_types = []
     user_input = i.split()
-    print(QuestionType(3))
+
     for index in range(len(user_input)):
         if user_input[index] in question_types:
             continue
 
-        question_types.append(QuestionType(user_input[index]))
+        question_types.append(int(user_input[index]))
 
     return question_types
 
@@ -89,7 +89,7 @@ def set_number_questions(number_of_questions=20) -> int:
     return number_of_questions
 
 
-def generate_question(question_types: List[QuestionType]) -> str:
+def generate_question(question_types: List[int]) -> str:
     number1 = random.randrange(0, 50)
     number2 = random.randrange(0, 50)
 
@@ -100,7 +100,7 @@ def generate_question(question_types: List[QuestionType]) -> str:
 
     question_type = question_types[0]
     if len(question_types) > 1:
-        question_type = random.randrange(question_types[0].value, question_types[len(question_types) - 1].value)
+        question_type = random.randrange(question_type, question_types[len(question_types) - 1] + 1)
 
     if question_type == QuestionType.ADDITION:
         return exp.add_expression()
@@ -117,7 +117,7 @@ def generate_question(question_types: List[QuestionType]) -> str:
     return 'NOT IMPLEMENTED YET!'
 
 
-def generate_questions(number_of_questions: int, question_types: List[QuestionType]) -> List[str]:
+def generate_questions(number_of_questions: int, question_types: List[int]) -> List[str]:
     questions = []
 
     for i in range(number_of_questions):
