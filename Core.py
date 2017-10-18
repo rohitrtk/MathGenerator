@@ -89,19 +89,17 @@ def set_number_questions(number_of_questions=20) -> int:
     return number_of_questions
 
 
-def generate_question(question_types: List[int]) -> str:
-    number1 = random.randrange(0, 50)
-    number2 = random.randrange(0, 50)
-
-    while number2 > number1:
-        number2 = random.randrange(0, 50)
-
-    exp = Expression(number1, number2)
+def generate_question(maximum_number: int, question_types: List[int]) -> str:
+    exp = Expression(maximum_number=maximum_number)
 
     question_type = question_types[0]
     if len(question_types) > 1:
         question_type = random.randrange(question_type, question_types[len(question_types) - 1] + 1)
 
+    return get_question_type(question_type, exp)
+
+
+def get_question_type(question_type: str, exp: Expression) -> str:
     if question_type == QuestionType.ADDITION:
         return exp.add_expression()
 
@@ -120,11 +118,13 @@ def generate_question(question_types: List[int]) -> str:
 def generate_questions(number_of_questions: int, question_types: List[int]) -> List[str]:
     questions = []
 
+    maximum_number = int(input('Enter the maximum number you\'d like: '))
+
     for i in range(number_of_questions):
 
-        q = generate_question(question_types)
+        q = generate_question(maximum_number, question_types)
         while q in questions:
-            q = generate_question(question_types)
+            q = generate_question(maximum_number, question_types)
 
         questions.append('%d) %s' % (i + 1, q))
 
@@ -144,9 +144,6 @@ def generate_file(target_file: str, questions: List[str]):
 
 
 def format_questions(questions: List[str]) -> List[str]:
-    # Gets the average number of chars per question
-    #average_chars = get_average_chars(questions)
-
     # Gets the max number of chars per question
     max_chars = get_max_chars(questions)
 
@@ -166,17 +163,9 @@ def format_questions(questions: List[str]) -> List[str]:
     return lines
 
 
-def get_average_chars(questions: List[str]) -> int:
-    indices = len(questions)
-
-    total_chars = 0
-    for question in questions:
-        total_chars += len(question)
-
-    return total_chars // indices
-
-
 def get_max_chars(questions: List[str]) -> int:
+    # Get the maximum number of characters from the list
+    # of questions
     max_char = 0
 
     for i in range(len(questions)):
@@ -187,7 +176,10 @@ def get_max_chars(questions: List[str]) -> int:
 
 
 def check_spacing(question: str, chars: int) -> str:
-    if len(question) >= chars:
+    # Compares the length of the question to some number chars
+    # and adds spacing if the length of the question
+    # is less than number of chars
+    if len(question) >= chars + 5:  # Added more spacing
         return question
 
     return '%s%s' % (question, ' ' * (chars - len(question)))
@@ -196,6 +188,7 @@ def check_spacing(question: str, chars: int) -> str:
 def add_pretty_line(length_of_previous: int) -> str:
     s = ''
 
+    # Sets string s to a some pretty -'s
     for i in range(length_of_previous):
         s += '-'
 
@@ -203,7 +196,7 @@ def add_pretty_line(length_of_previous: int) -> str:
 
 
 def generate_file_name(directory_name: str) -> str:
-    # file_name will be a constant
+    # File file_name will be a constant
     t = '%s_%s-%s-%s' % (str(datetime.now().date()), str(datetime.now().hour), str(datetime.now().minute), str(datetime.now().second))
 
     return '%s_%s%s' % (directory_name, t, FILE_EXTENSION)
