@@ -25,23 +25,29 @@ class Expression:
 
     def sub_expression(self) -> str:
         s = ''
-        lon = []
-        for i in range(self.number_of_numbers + 1):
-            lon.append(random.randrange(0, self.maximum_number // 2))
 
-            if i > 0 and lon[i] >= lon[i - 1]:
-                lon[i] = random.randrange(0, lon[i - 1], 1)
+        # Numbers in expression
+        nie = []
 
-        for i in lon:
+        # 'Assume 2'
+        for i in range(self.number_of_numbers):
+            if i > 0:
+                print(i)
+                n = random.randrange(0, nie[i] - 1 // 2)
+            else:
+                n = random.randrange(0, self.maximum_number // 2)
+            nie.append(n)
+
+        s += '%d ' % nie[0]
+        for i in range(len(nie)):
             if i == 0:
-                s += '%d ' % i
                 continue
-            elif i < self.number_of_numbers:
-                s += '- %d ' % i
-                continue
-            s += '= '
+
+            s += '+ %d ' % nie[i]
+        s += '= '
 
         return s
+
 
     def mul_expression(self) -> str:
         return '%d x %d = ' % (self.number1, self.number2)

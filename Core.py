@@ -9,6 +9,7 @@ FILE_NAME = 'Questions'
 FILE_EXTENSION = '.txt'
 HOME_DIRECTORY = os.path.join(os.environ['USERPROFILE'], 'Desktop')
 
+USE_TEST_FILE = True
 
 def run():
 
@@ -135,6 +136,13 @@ def generate_questions(number_of_questions: int, question_types: List[int]) -> L
 
 
 def generate_file(target_file: str, questions: List[str]):
+    if USE_TEST_FILE:
+        with open('Questions.txt', 'w') as file:
+
+            for line in format_questions(questions):
+                file.write(line)
+        return
+
     create_file(target_file)
 
     with open(target_file, 'w') as file:
