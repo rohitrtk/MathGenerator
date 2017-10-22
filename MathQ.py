@@ -3,6 +3,8 @@ import random
 
 class Expression:
 
+    MAX_MULTIPLY = 20
+
     def __init__(self, maximum_number=50, number_of_numbers=2):
         self.maximum_number = maximum_number
         self.number_of_numbers = number_of_numbers
@@ -29,13 +31,12 @@ class Expression:
         # Numbers in expression
         nie = []
 
-        # 'Assume 2'
         for i in range(self.number_of_numbers):
             if i > 0:
-                print(i)
-                n = random.randrange(0, nie[i] - 1 // 2)
+                n = random.randrange(0, nie[i - 1])
             else:
-                n = random.randrange(0, self.maximum_number // 2)
+                # Using a random number for the min value to prevent an empty range error
+                n = random.randrange(random.randrange(1, 5), self.maximum_number)
             nie.append(n)
 
         s += '%d ' % nie[0]
@@ -43,17 +44,29 @@ class Expression:
             if i == 0:
                 continue
 
-            s += '+ %d ' % nie[i]
+            s += '- %d ' % nie[i]
         s += '= '
 
         return s
 
-
     def mul_expression(self) -> str:
-        return '%d x %d = ' % (self.number1, self.number2)
+        s = ''
+
+        nie = []
+
+        for i in range(self.number_of_numbers):
+            # Check that multiplication of two numbers <= max number
+            n = random.randrange(0, self.MAX_MULTIPLY)
+
+            if i > 0:
+
+            nie.append(n)
+        return s
 
     def div_expression(self) -> str:
-        return '%d \u00F7 %d = ' % (self.number1, self.number2)
+        s = ''
+
+        return s
 
 
 class QuestionType:

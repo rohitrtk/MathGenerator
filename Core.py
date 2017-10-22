@@ -11,6 +11,7 @@ HOME_DIRECTORY = os.path.join(os.environ['USERPROFILE'], 'Desktop')
 
 USE_TEST_FILE = True
 
+
 def run():
 
     # Set the type of questions
@@ -119,7 +120,19 @@ def get_question_type(question_type: str, exp: Expression) -> str:
 def generate_questions(number_of_questions: int, question_types: List[int]) -> List[str]:
     questions = []
 
-    maximum_number = int(input('Enter the maximum number you\'d like: '))
+    while True:
+        s_maximum_number = input(
+            'Enter the maximum number you\'d like. (The default is 50, enter a blank line to user default): ')
+
+        if not s_maximum_number:
+            maximum_number = 50
+            break
+
+        try:
+            maximum_number = int(s_maximum_number)
+            break
+        except ValueError:
+            print('Invalid Input')
 
     for i in range(number_of_questions):
 
@@ -187,7 +200,7 @@ def check_spacing(question: str, chars: int) -> str:
     # Compares the length of the question to some number chars
     # and adds spacing if the length of the question
     # is less than number of chars
-    if len(question) >= chars + 5:  # Added more spacing
+    if len(question) >= chars + 50:  # Added more spacing
         return question
 
     return '%s%s' % (question, ' ' * (chars - len(question)))
